@@ -19,6 +19,7 @@ apply plugin: 'kotlin'
 
 repositories {
     jcenter()
+    mavenLocal()
     maven { url = "https://repo.aikar.co/content/groups/aikar/" }
     mavenCentral()
 }
@@ -46,16 +47,6 @@ shadowJar {
 }
 build.dependsOn shadowJar
 
-sourceSets {
-    filtered {
-        java {
-            srcDirs = [
-                    'src/test/kotlin',
-            ]
-        }
-    }
-}
-
 jar {
     manifest {
         attributes 'Implementation-Title': 'EMC Bot'
@@ -71,7 +62,8 @@ task fatJar(type: Jar) {
         attributes 'Implementation-Version': version
         attributes 'Main-Class': 'BotKt'
     }
-    baseName = project.name + '-withDependencies'
+    baseName = project.name
+    version = ""
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
