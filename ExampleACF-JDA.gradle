@@ -1,0 +1,78 @@
+buildscript {
+    ext.kotlin_version = '1.2.30'
+
+    repositories {
+        jcenter();
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.2"
+    }
+}
+
+group 'com.empireminecraft'
+version '1.0.0-SNAPSHOT'
+
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: 'kotlin'
+
+repositories {
+    jcenter()
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "com.google.guava:guava:19.0"
+    compile "co.aikar:acf-core:0.5.0-SNAPSHOT"
+    compile "co.aikar:acf-jda:0.5.0-SNAPSHOT"
+    compile 'net.dv8tion:JDA:3.5.1_347'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.javaParameters = true
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+shadowJar {
+    relocate 'co.aikar.commands', 'com.empireminecraft.acf'
+}
+build.dependsOn shadowJar
+
+sourceSets {
+    filtered {
+        java {
+            srcDirs = [
+                    'src/test/kotlin',
+            ]
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'EMC Bot'
+        attributes 'Implementation-Version': version
+        attributes 'Main-Class': 'BotKt'
+    }
+}
+
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'EMC Bot'
+        attributes 'Implementation-Version': version
+        attributes 'Main-Class': 'BotKt'
+    }
+    baseName = project.name + '-withDependencies'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
