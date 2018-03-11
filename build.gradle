@@ -29,10 +29,12 @@ dependencies {
     compile "com.google.guava:guava:19.0"
     compile "co.aikar:acf-core:0.5.0-SNAPSHOT"
     compile "co.aikar:acf-jda:0.5.0-SNAPSHOT"
+    compile "co.aikar:idb-core:1.0.0-SNAPSHOT"
     compile 'net.dv8tion:JDA:3.5.1_347'
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
-    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
-
+    compile 'org.xerial:sqlite-jdbc:3.21.0.1'
+    compile 'org.slf4j:slf4j-simple:1.7.25'
+    compile 'com.zaxxer:HikariCP:2.4.1'
+    compile 'mysql:mysql-connector-java:5.1.33'
 }
 
 compileKotlin {
@@ -43,7 +45,7 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 shadowJar {
-    relocate 'co.aikar.commands', 'com.empireminecraft.acf'
+
 }
 build.dependsOn shadowJar
 
