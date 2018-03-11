@@ -1,19 +1,15 @@
-import co.aikar.commands.JDACommandEvent
 import co.aikar.commands.JDACommandManager
 import co.aikar.commands.JDAOptions
-import co.aikar.db.DB
-import co.aikar.db.DatabaseOptions
-import co.aikar.db.PooledDatabaseOptions
+import co.aikar.idb.DB
+import co.aikar.idb.DatabaseOptions
+import co.aikar.idb.PooledDatabaseOptions
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.Role
 import java.io.FileInputStream
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.*
-import java.util.function.Consumer
 import java.util.logging.Logger
 
 fun main(args: Array<String>) {
