@@ -21,6 +21,10 @@ class Listener(var jda: JDA, private var bot: Bot) : ListenerAdapter() {
     private val comm3Role =  370399366810435585;
 
     override fun onReady(event: ReadyEvent?) {
+        checkAllGuilds()
+    }
+
+    fun checkAllGuilds() {
         jda.guilds.forEach {
             checkGuild(it);
         }
@@ -34,6 +38,7 @@ class Listener(var jda: JDA, private var bot: Bot) : ListenerAdapter() {
         if (guild.idLong != emc) {
             return;
         }
+        bot.logger.info("Checking")
         checkChannel(guild, comm1, comm1Role);
         checkChannel(guild, comm2, comm2Role);
         checkChannel(guild, comm3, comm3Role);
@@ -47,6 +52,9 @@ class Listener(var jda: JDA, private var bot: Bot) : ListenerAdapter() {
             if (!voiceState.inVoiceChannel() || voiceState.channel.idLong != channel) {
                 bot.rmRole(it, roleId);
             }
+        }
+        for (member in guild.getVoiceChannelById(channel).members) {
+            bot.addRole(member, roleId)
         }
     }
 

@@ -11,6 +11,7 @@ import net.dv8tion.jda.core.entities.Role
 import java.io.FileInputStream
 import java.util.*
 import java.util.logging.Logger
+import kotlin.concurrent.fixedRateTimer
 
 fun main(args: Array<String>) {
     val options = JDAOptions();
@@ -39,15 +40,19 @@ fun main(args: Array<String>) {
             ).build()
         ).createHikariDatabase()
 
+
+    DB.setGlobalDatabase(db)
+    val bot = Bot(jda, options, logger);
     Runtime.getRuntime().addShutdownHook(Thread {
         logger.info("Shutting Down")
+        bot.close();
         db.close();
     })
-    DB.setGlobalDatabase(db)
-    Bot(jda, options, logger);
 }
 
 class Bot(jda: JDA, options: JDAOptions, private val botLogger: Logger) : JDACommandManager(jda, options) {
+
+    private var timer: Timer
 
     init {
         this.registerDependency(javaClass, this)
@@ -55,7 +60,11 @@ class Bot(jda: JDA, options: JDAOptions, private val botLogger: Logger) : JDACom
         this.registerCommand(BaseCommands())
         //this.setConfigProvider {}
         //this.setPermissionResolver { event, permission -> false };
-        jda.addEventListener(Listener(jda, this))
+        val listener = Listener(jda, this)
+        jda.addEventListener(listener)
+        this.timer = fixedRateTimer(name = "RankCheckTimer", initialDelay = 0, period = 60*1000) {
+            listener.checkAllGuilds();
+        }
     }
 
     override fun getLogger(): Logger {
@@ -64,16 +73,26 @@ class Bot(jda: JDA, options: JDAOptions, private val botLogger: Logger) : JDACom
 
     fun addRole(member: Member, id: Long) {
         val role = getRole(id)
+        if (member.roles.contains(role)) {
+            return;
+        }
         logger.info("Adding role ${role.name} to ${member.effectiveName}");
         member.guild.controller.addRolesToMember(member, role).queue();
     }
     fun rmRole(member: Member, id: Long) {
         val role = getRole(id)
+        if (!member.roles.contains(role)) {
+            return;
+        }
         logger.info("Removing role ${role.name} from ${member.effectiveName}");
         member.guild.controller.removeRolesFromMember(member, role).queue();
     }
 
     fun getRole(id: Long): Role {
         return jda.getRoleById(id);
+    }
+
+    fun close() {
+        this.timer.cancel()
     }
 }
