@@ -10,15 +10,15 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter
 
 class Listener(var jda: JDA, private var bot: Bot) : ListenerAdapter() {
 
-    private val emc = 368557034305486871;
+    private val emc = 390610235250835467;
 
-    private val comm1 = 369615347193479183;
-    private val comm2 = 369616432041951232;
-    private val comm3 = 369616589982531586;
+    private val comm1 = 425800238272479234;
+    private val comm2 = 425801086700486656;
+    private val comm3 = 425801334118154240;
 
-    private val comm1Role =  370399311814590474;
-    private val comm2Role =  370399358425890818;
-    private val comm3Role =  370399366810435585;
+    private val comm1Role =  425800300708888587;
+    private val comm2Role =  425800319390449665;
+    private val comm3Role =  425800424495513601;
 
     override fun onReady(event: ReadyEvent?) {
         checkAllGuilds()
